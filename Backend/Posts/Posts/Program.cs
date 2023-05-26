@@ -1,4 +1,6 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Posts.DAL;
+
+var builder = WebApplication.CreateBuilder(args);
 // Запускает сервер
 
 builder.Services.AddControllers();
@@ -6,6 +8,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 // Собирает все ендпоинты
 builder.Services.AddSwaggerGen();
+// Генерирует доку
+builder.Services.AddDatabase(builder.Configuration);
 // Генерирует доку
 
 var app = builder.Build();
