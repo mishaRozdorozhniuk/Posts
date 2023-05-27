@@ -17,6 +17,7 @@
 
 <script>
 import MyDialog from "@/components/UI/MyDialog";
+import {mapActions, mapGetters, mapMutations} from 'vuex'
 
 export default {
   components: {MyDialog},
@@ -28,9 +29,23 @@ export default {
     }
   },
   methods: {
-    handleSubmitForm() {
-      console.log(this.firstName)
-      console.log(this.lastName)
+    ...mapActions({
+      loginUser: 'post/loginUser'
+    }),
+    ...mapGetters({
+      getIsAuth: 'post/getIsAuth'
+    }),
+    ...mapMutations({
+      setFirstName: 'post/setFirstName',
+      setLastName: 'post/setLastName'
+    }),
+    async handleSubmitForm() {
+      this.setFirstName(this.firstName)
+      this.setLastName(this.lastName)
+      await this.loginUser()
+      if(this.getIsAuth) {
+        this.$router.push('/posts')
+      }
     }
   }
 };

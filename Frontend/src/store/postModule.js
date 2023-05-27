@@ -15,7 +15,10 @@ export const postModule = {
             {value: 'body', name: 'by description'}
         ],
         firstName: '',
-        lastName: ''
+        lastName: '',
+        userGid: '',
+        JWT: '',
+        isAuth: false
     }),
     getters: {
         sortedPosts(state) {
@@ -23,6 +26,9 @@ export const postModule = {
         },
         sortedAndSearchedPosts(state, getters) {
             return getters.sortedPosts.filter(post => post.title.toLowerCase().includes(state.searchQuery.toLowerCase()))
+        },
+        getIsAuth(state) {
+            return state.isAuth
         }
     },
     mutations: {
@@ -49,19 +55,21 @@ export const postModule = {
         },
         setLastName(state, lastName) {
             state.lastName = lastName;
-        }
+        },
+        setUserGid(state, userGid) {
+            state.userGid = userGid;
+        },
+        setJWT(state, jwt) {
+            state.JWT = jwt;
+            if(jwt !== '' && jwt !== null) state.isAuth = true
+        },
     },
     actions: {
         async fetchPosts({state, commit}) {
             try {
                 commit('setLoading', true)
-                const response = await axios('https://jsonplaceholder.typicode.com/posts', {
-                    params: {
-                        _page: state.page,
-                        _limit: state.limit
-                    }
-                })
-                commit('setTotalPages', Math.ceil(response.headers['x-total-count'] / state.limit))
+                axios.defaults.headers.common['Authorization'] = `Bearer ${state.JWT}`;
+                const response = await axios.get('http://localhost:5000/api/posts')
                 commit('setPosts', response.data )
             } catch (e) {
                 console.log(e)
@@ -69,14 +77,22 @@ export const postModule = {
                 commit('setLoading', false)
             }
         },
-        submitForm({ commit, state }) {
-            commit('setFirstName', state.firstName);
-            commit('setLastName', state.lastName);
-
-
-            commit('setFirstName', '');
-            commit('setLastName', '');
-        }
+        async loginUser({state, commit}) {
+            try {
+                commit('setLoading', true)
+                const newUser = {
+                    firstName: state.firstName,
+                    lastName: state.lastName
+                }
+                const response = await axios.post(`http://localhost:5000/api/users`, newUser)
+                commit('setJWT', response.data.jwtToken)
+                commit('setUserGid', response.data.userGid)
+            } catch (e) {
+                console.log(e)
+            } finally {
+                commit('setLoading', false)
+            }
+        },
     },
     namespaced: true
 }
