@@ -1,19 +1,25 @@
 ﻿using System;
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Posts.Models;
 
 namespace Posts.DAL.Repositories;
 
 public interface IRepository<T> where T : BaseEntity
+    // Промеж слой чтобы работать бэк с дб
+
     // T - тупо параметр который после :
 
     // Репозиторий будет взаимодействовать с базой
     // Дженерик переиспользованный (user, post)
 {
     Task<IEnumerable<T>> GetListAsync();
+
+    Task<IEnumerable<T>> GetListByFiltersAsync(Expression<Func<T, bool>> condition);
     // с помощю Task - реализованный многопоточный ассинхронный код
     // IEnumerable - базовый интерфейс для коллекций листов и таких прикоов 
     Task<T> GetByGidAsync(Guid gid);
+    // доступ к Guid gid благодаря : BaseEntity
     Task<bool> AddAsync(T entity);
     Task<bool> DeleteAsync(T entity);
     Task<bool> UpdateAsync(T entity);
@@ -41,6 +47,11 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         => await _dbSet.AsNoTracking().ToListAsync<T>();
     // AsNoTracking - само чтобы работало
     // ToListAsync - к списку дженерика
+
+    public async Task<IEnumerable<T>> GetListByFiltersAsync(Expression<Func<T, bool>> condition)
+        //<Func<T, bool>> - делегат (коробка ссылок на методы)
+        => await _dbSet.AsNoTracking().Where(condition).ToListAsync<T>();
+    //
 
     public async Task<T> GetByGidAsync(Guid gid)
         => await _dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.Gid == gid);

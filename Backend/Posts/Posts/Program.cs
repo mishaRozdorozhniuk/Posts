@@ -1,4 +1,6 @@
-﻿using Posts.DAL;
+﻿using Microsoft.Extensions.Configuration;
+using Posts.DAL;
+using Posts.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 // Запускает сервер
@@ -11,6 +13,9 @@ builder.Services.AddSwaggerGen();
 // Генерирует доку
 builder.Services.AddDatabase(builder.Configuration);
 // Генерирует доку
+
+builder.Services.Configure<JWTOptions>(builder.Configuration.GetSection("JWTOptions"));
+// сопоставление JWTOptions с секцией в джейсоне
 
 var app = builder.Build();
 

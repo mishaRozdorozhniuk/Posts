@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
+using Posts.Controllers.Requests;
 using Posts.DAL.Repositories;
 using Posts.Models;
 
@@ -31,14 +34,34 @@ public class PostsController : Controller
         => Ok(await _posts.GetByGidAsync(gid));
 
     [HttpPost]
-    public async Task<IActionResult> CreatePost([FromBody] Post post)
-        => Ok(await _posts.AddAsync(post));
+    public async Task<IActionResult> CreatePost([FromBody] PostRequest request)
+    // PostRequest - какие поля я с клиента шлю
+    {
+        var post = new Post(request.Title, request.Body, request.UserGid);
+        return Ok(await _posts.AddAsync(post));
+    }
 
     [HttpDelete]
-    public async Task<IActionResult> DeletePost([FromBody] Post post)
-        => Ok(await _posts.DeleteAsync(post));
+    public async Task<IActionResult> DeletePost([FromBody] Guid gid)
+    {
+        var post = await _posts.GetByGidAsync(gid);
+
+        if (post is null) return NoContent();
+
+        return Ok(await _posts.DeleteAsync(post));
+    }
 
     [HttpPut]
-    public async Task<IActionResult> UpdatePost([FromBody] Post post)
-       => Ok(await _posts.UpdateAsync(post));
+    public async Task<IActionResult> UpdatePost([FromBody] ChangePostRequest request)
+    {
+        var post = await _posts.GetByGidAsync(request.Gid);
+
+        if (post is null) return NoContent();
+
+        post.Title = request.Title;
+        post.Body = request.Body;
+        post.UserGid = request.UserGid;
+
+        return Ok(await _posts.UpdateAsync(post));
+    }
 }

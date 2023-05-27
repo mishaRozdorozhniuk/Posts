@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+# секция для регистрации наших компонентов
+  db:
+    image: postgres
+    container_name: db
+
+  posts-api:
+    image: posts-api
+    build:
+      context: .
+      dockerfile: Posts/Dockerfile
+      # для запуска dockerfile
+      # dockerfile - отдельное приложение (backend, frontend)
+
+  posts-frontend:
+    image: posts-frontend
+    build:
+      context: .
+      dockerfile: ../../Frontend/Dockerfile
+
+volumes:
+# volumes - бэкап бд, чтобы не потерять данные при остановлении работы контейнера
+  db:
+    driver: local
