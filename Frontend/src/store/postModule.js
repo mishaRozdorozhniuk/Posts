@@ -18,7 +18,9 @@ export const postModule = {
         lastName: '',
         userGid: '',
         JWT: '',
-        isAuth: false
+        isAuth: false,
+        title: '',
+        body: ''
     }),
     getters: {
         sortedPosts(state) {
@@ -29,11 +31,20 @@ export const postModule = {
         },
         getIsAuth(state) {
             return state.isAuth
+        },
+        getUserGid(state) {
+            return state.userGid
         }
     },
     mutations: {
         setPosts(state, posts) {
             state.posts = posts;
+        },
+        setTitle(state, title) {
+            state.title = title;
+        },
+        setBody(state, body) {
+            state.body = body;
         },
         setLoading(state, bool) {
             state.isPostsLoading = bool
@@ -62,6 +73,12 @@ export const postModule = {
         setJWT(state, jwt) {
             state.JWT = jwt;
             if(jwt !== '' && jwt !== null) state.isAuth = true
+        },
+        removePost(state, postId) {
+            state.posts = state.posts.filter(post => post.gid !== postId);
+        },
+        addPost(state, post) {
+            state.posts = [...state.posts, post];
         },
     },
     actions: {
@@ -93,6 +110,47 @@ export const postModule = {
                 commit('setLoading', false)
             }
         },
+        async addPost({state, commit}) {
+            try {
+                commit('setLoading', true)
+                const newPost = {
+                    title: state.title,
+                    body: state.body,
+                    userGid: state.userGid
+                }
+                const response = await axios.post(`http://localhost:5000/api/posts`, newPost)
+                commit('addPost', response.data)
+            } catch (e) {
+                console.log(e)
+            } finally {
+                commit('setLoading', false)
+            }
+        },
+        async deletePost({ commit }, postId) {
+            console.log(postId, 'id')
+            try {
+                commit('setLoading', true);
+                const response = await axios.delete(`http://localhost:5000/api/posts?gid=${postId}`);
+                console.log(response.data);
+                commit('removePost', postId);
+            } catch (e) {
+                console.log(e);
+            } finally {
+                commit('setLoading', false);
+            }
+        },
+        // async showMyPosts({ state, commit }) {
+        //     try {
+        //         commit('setLoading', true);
+        //         const response = await axios(`http://localhost:5000/api/posts/user?userGid=${state.userGid}`);
+        //         console.log(response.data);
+        //         commit('', postId);
+        //     } catch (e) {
+        //         console.log(e);
+        //     } finally {
+        //         commit('setLoading', false);
+        //     }
+        // }
     },
     namespaced: true
 }

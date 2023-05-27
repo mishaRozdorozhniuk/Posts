@@ -20,9 +20,9 @@ public interface IRepository<T> where T : BaseEntity
     // IEnumerable - базовый интерфейс для коллекций листов и таких прикоов 
     Task<T> GetByGidAsync(Guid gid);
     // доступ к Guid gid благодаря : BaseEntity
-    Task<bool> AddAsync(T entity);
+    Task<T> AddAsync(T entity);
     Task<bool> DeleteAsync(T entity);
-    Task<bool> UpdateAsync(T entity);
+    Task<T> UpdateAsync(T entity);
     // Methods
 }
 
@@ -56,12 +56,12 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
     public async Task<T> GetByGidAsync(Guid gid)
         => await _dbSet.AsNoTracking().FirstOrDefaultAsync(x => x.Gid == gid);
 
-    public async Task<bool> AddAsync(T entity)
+    public async Task<T> AddAsync(T entity)
     {
         await _dbSet.AddAsync(entity); // git commit
         await _postContext.SaveChangesAsync(); // git push
 
-        return true;
+        return entity;
     }
 
     public async Task<bool> DeleteAsync(T entity)
@@ -75,11 +75,11 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         return true;
     }
 
-    public async Task<bool> UpdateAsync(T entity)
+    public async Task<T> UpdateAsync(T entity)
     {
         _dbSet.Update(entity); // git commit
         await _postContext.SaveChangesAsync(); // git push
 
-        return true;
+        return entity;
     }
 }

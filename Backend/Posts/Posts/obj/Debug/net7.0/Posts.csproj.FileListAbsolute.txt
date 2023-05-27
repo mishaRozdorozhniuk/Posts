@@ -41,3 +41,11 @@
 /Users/applemisharoz2003gmail.com/Desktop/PostsApp/Backend/Posts/Posts/obj/Debug/net7.0/Posts.pdb
 /Users/applemisharoz2003gmail.com/Desktop/PostsApp/Backend/Posts/Posts/obj/Debug/net7.0/Posts.genruntimeconfig.cache
 /Users/applemisharoz2003gmail.com/Desktop/PostsApp/Backend/Posts/Posts/obj/Debug/net7.0/ref/Posts.dll
+/Users/applemisharoz2003gmail.com/Desktop/PostsApp/Backend/Posts/Posts/bin/Debug/net7.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
+/Users/applemisharoz2003gmail.com/Desktop/PostsApp/Backend/Posts/Posts/bin/Debug/net7.0/Microsoft.IdentityModel.Abstractions.dll
+/Users/applemisharoz2003gmail.com/Desktop/PostsApp/Backend/Posts/Posts/bin/Debug/net7.0/Microsoft.IdentityModel.JsonWebTokens.dll
+/Users/applemisharoz2003gmail.com/Desktop/PostsApp/Backend/Posts/Posts/bin/Debug/net7.0/Microsoft.IdentityModel.Logging.dll
+/Users/applemisharoz2003gmail.com/Desktop/PostsApp/Backend/Posts/Posts/bin/Debug/net7.0/Microsoft.IdentityModel.Protocols.dll
+/Users/applemisharoz2003gmail.com/Desktop/PostsApp/Backend/Posts/Posts/bin/Debug/net7.0/Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+/Users/applemisharoz2003gmail.com/Desktop/PostsApp/Backend/Posts/Posts/bin/Debug/net7.0/Microsoft.IdentityModel.Tokens.dll
+/Users/applemisharoz2003gmail.com/Desktop/PostsApp/Backend/Posts/Posts/bin/Debug/net7.0/System.IdentityModel.Tokens.Jwt.dll

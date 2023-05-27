@@ -66,22 +66,29 @@ export default {
       setSelectedSort: 'post/setSelectedSort'
     }),
     ...mapActions({
-      fetchPosts: 'post/fetchPosts'
+      fetchPosts: 'post/fetchPosts',
+      addPost: "post/addPost",
+      deletePost: "post/deletePost"
     }),
-    createPost(post) {
-      this.posts.push(post)
+    ...mapMutations({
+      setTitle: 'post/setTitle',
+      setBody: 'post/setBody',
+    }),
+    async createPost(post) {
+      this.setTitle(post.title)
+      this.setBody(post.body)
+      await this.addPost()
       this.dialogVisible = false
     },
     removePost(post) {
-      this.posts = this.posts.filter(p => p.id !== post.id)
+      this.deletePost(post.gid)
     },
     showDialog() {
       this.dialogVisible = true
     },
-
     changePage(pageNumber) {
       this.page = pageNumber
-    }
+    },
   },
   mounted() {
     this.fetchPosts()
@@ -100,8 +107,9 @@ export default {
     }),
     ...mapGetters({
       sortedPosts: 'post/sortedPosts',
-      sortedAndSearchedPosts: "post/sortedAndSearchedPosts"
-    })
+      sortedAndSearchedPosts: "post/sortedAndSearchedPosts",
+      getUserGid: "post/getUserGid"
+    }),
   },
   watch: {
     page() {

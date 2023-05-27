@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using Posts.Controllers.Requests;
@@ -12,6 +13,7 @@ using Posts.Models;
 namespace Posts.Controllers;
 
 [Route("api/posts")]
+[Authorize]
 public class PostsController : Controller
 {
     private readonly IRepository<Post> _posts;
@@ -25,7 +27,7 @@ public class PostsController : Controller
     public async Task<IActionResult> GetPosts()
         => Ok(await _posts.GetListAsync());
 
-    [HttpGet]
+    [HttpGet("user")]
     public async Task<IActionResult> GetListByFiltersAsync([FromQuery] Guid userGid)
         => Ok(await _posts.GetListByFiltersAsync(x => x.UserGid == userGid));
 
@@ -38,11 +40,14 @@ public class PostsController : Controller
     // PostRequest - какие поля я с клиента шлю
     {
         var post = new Post(request.Title, request.Body, request.UserGid);
-        return Ok(await _posts.AddAsync(post));
+
+        var createdPost = await _posts.AddAsync(post);
+
+        return Ok(createdPost);
     }
 
     [HttpDelete]
-    public async Task<IActionResult> DeletePost([FromBody] Guid gid)
+    public async Task<IActionResult> DeletePost([FromQuery] Guid gid)
     {
         var post = await _posts.GetByGidAsync(gid);
 

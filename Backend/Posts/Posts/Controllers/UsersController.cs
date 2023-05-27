@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,7 +35,7 @@ public class UsersController : Controller
 
         var createdUser = await _users.AddAsync(user); // -> bool
 
-        if(createdUser)
+        if(createdUser is not null)
             // если юзер создался то мы генерируем для него токен и возвращяем юзер айди на фронт
             return Ok(new AuthResponse(GenerationJwtToken(user), user.Gid));
         // если не создался то 400 ерор
@@ -45,27 +46,26 @@ public class UsersController : Controller
     {
         var jwtTokenHandler = new JwtSecurityTokenHandler();
 
-        var key = Encoding.UTF8.GetBytes(_jwtOptions.SecretKey);
+        SecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.SecretKey));
 
-        var tokenDescriptor = new SecurityTokenDescriptor()
+        SigningCredentials credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var claims = new List<Claim>
         {
-            Subject = new ClaimsIdentity(new[]
-            {
-                // Claim - payload part insight token
-                new Claim("id", user.Gid.ToString()),
+               new Claim("id", user.Gid.ToString()),
                 new Claim("firstName", user.FirstName),
-                new Claim("lastName", user.LastName),
-            }),
-
-            Expires = DateTime.Now.AddHours(_jwtOptions.ExpiryMinutes),
-            // HmacSha256 - type of coding
-            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
+                new Claim("lastName", user.LastName)
         };
 
-        var token = jwtTokenHandler.CreateToken(tokenDescriptor);
-        var jwtToken = jwtTokenHandler.WriteToken(token);
+        JwtSecurityToken token = new JwtSecurityToken(
+            "http://localhost:5000",
+            "http://localhost:8081",
+            claims,
+            DateTime.UtcNow,
+            DateTime.UtcNow.AddMinutes(_jwtOptions.ExpiryMinutes),
+            credentials);
 
-        return jwtToken;
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
 }

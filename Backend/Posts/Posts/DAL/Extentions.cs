@@ -13,7 +13,9 @@ public static class Extentions
         services.AddDbContext<PostContext>(options =>
         // регестрируем базу
         {
-            options.UseNpgsql(configuration["ConnectionString"]);
+            var connectionString = configuration["ConnectionString"];
+
+            options.UseNpgsql(connectionString);
             // UseNpgsql - будем использовать именно постгрес, и передаем ConnectionString с джейсона чтобы установить соединение
         });
 

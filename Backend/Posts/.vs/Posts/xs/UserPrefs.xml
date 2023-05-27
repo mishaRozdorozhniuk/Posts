@@ -1,6 +1,5 @@
-﻿<Properties StartupConfiguration="{74ACE1BD-5255-4EA0-81E4-F4D45892D70E}|Default">
+﻿<Properties StartupConfiguration="{F810DE4A-E17A-4D31-A6FA-F0E28A1725D1}|http">
   <MultiItemStartupConfigurations />
-  <MonoDevelop.Ide.ItemProperties.docker-compose PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.ItemProperties.Posts PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
